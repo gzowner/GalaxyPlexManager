@@ -36,6 +36,7 @@ else
 fi
 
 cd "$APP_DIR"
+chmod +x scripts/*.sh
 if [[ ! -f .env ]]; then
   cp .env.example .env
   SECRET_KEY="$(openssl rand -hex 32)"
@@ -43,6 +44,8 @@ if [[ ! -f .env ]]; then
   POSTGRES_PASSWORD="$(openssl rand -base64 24 | tr -d '/+=' | head -c 28)"
   sed -i "s|SECRET_KEY=.*|SECRET_KEY=${SECRET_KEY}|" .env
   sed -i "s|ADMIN_PASSWORD=.*|ADMIN_PASSWORD=${ADMIN_PASSWORD}|" .env
+  NODE_HOST="$(hostname -I | awk '{print $1}')"
+  sed -i "s|DEFAULT_NODE_HOST=.*|DEFAULT_NODE_HOST=${NODE_HOST}|" .env
   sed -i "s|change-me@db|${POSTGRES_PASSWORD}@db|" .env
   printf '\nPOSTGRES_PASSWORD=%s\n' "$POSTGRES_PASSWORD" >> .env
   chmod 600 .env
