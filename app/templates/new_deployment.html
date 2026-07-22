@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Create Plex · {{ app_name }}{% endblock %}
+{% block heading %}<h1>Create customer Plex</h1><p>Clone the master, reset its identity, and claim it to the customer's Plex account.</p>{% endblock %}
+{% block content %}
+<section class="panel narrow form-panel">
+  <form method="post" action="/deployments/new" class="stack">
+    <label>Plex server name<input name="name" placeholder="GalaxyTV - Customer 1" required></label>
+    <label>Owner<select name="owner_id" required>{% for owner in owners %}<option value="{{ owner.id }}">{{ owner.username }} ({{ owner.role.value }})</option>{% endfor %}</select></label>
+    <label>Node<select name="node_id" required>{% for node in nodes %}<option value="{{ node.id }}">{{ node.name }} · ports {{ node.port_start }}–{{ node.port_end }}</option>{% endfor %}</select></label>
+    <label>Plex claim token<input name="claim_token" placeholder="claim-xxxxxxxxxxxxxxxxxxxx" required><span>Generate a fresh token while signed into the customer's Plex account. It is used during first boot and is not stored in the database.</span></label>
+    <div class="notice"><strong>What happens next</strong><p>The master config is copied, master identity/account fields are removed, a free port is assigned, Plex starts with this claim token, and the container is recreated without the token after Plex accepts it.</p></div>
+    <button class="button primary" type="submit">Clone and claim Plex</button>
+  </form>
+</section>
+{% endblock %}
