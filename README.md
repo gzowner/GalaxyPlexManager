@@ -1,0 +1,2 @@
+# GalaxyPlexManager
+Plex Manager
