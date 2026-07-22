@@ -199,7 +199,10 @@ def create_user(
         return actor
     if actor.role == UserRole.USER:
         return redirect("/", error="Access denied")
-    requested_role = UserRole(role)
+    try:
+        requested_role = UserRole(role)
+    except ValueError:
+        return redirect("/users", error="Invalid account role")
     if actor.role == UserRole.RESELLER:
         requested_role = UserRole.USER
         parent_id = actor.id
@@ -286,9 +289,9 @@ def create_node(
             port_end=port_end,
             enable_hardware=enable_hardware,
         )
+        DockerService(node).ping()
         db.add(node)
         db.commit()
-        DockerService(node).ping()
     except Exception as exc:
         db.rollback()
         return redirect("/nodes", error=str(exc))
