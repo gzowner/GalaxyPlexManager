@@ -66,7 +66,7 @@ The source Plex server should be stopped or snapshotted before capture. The mast
 
 ```bash
 sudo apt-get install -y rsync sqlite3
-sudo /opt/GalaxyPlexManager/scripts/capture_master.sh \
+sudo bash /opt/GalaxyPlexManager/scripts/capture_master.sh \
   /path/to/master/plex/config \
   /opt/galaxyplexmanager/templates/master \
   master-plex-container-name
