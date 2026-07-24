@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Nodes · {{ app_name }}{% endblock %}
+{% block heading %}<h1>Nodes</h1><p>Docker hosts, master template locations, media mounts, and Plex port ranges.</p>{% endblock %}
+{% block content %}
+<div class="two-column">
+<section class="panel">
+  <div class="panel-head"><div><h2>Configured nodes</h2><p>The MVP supports local Docker socket nodes.</p></div></div>
+  {% for node in nodes %}<article class="node-card"><div><h3>{{ node.name }}</h3><p>{{ node.host }} · {{ node.docker_url }}</p></div><dl><dt>Template</dt><dd>{{ node.template_path }}</dd><dt>Deployments</dt><dd>{{ node.base_path }}</dd><dt>Ports</dt><dd>{{ node.port_start }}–{{ node.port_end }}</dd></dl></article>{% endfor %}
+</section>
+<section class="panel form-panel">
+  <h2>Add node</h2>
+  <form method="post" action="/nodes/new" class="stack">
+    <label>Name<input name="name" required></label>
+    <label>Advertised host or IP<input name="host" placeholder="plex.example.com" required></label>
+    <label>Docker URL<input name="docker_url" value="unix:///var/run/docker.sock" required></label>
+    <label>Deployment base path<input name="base_path" value="/opt/galaxyplexmanager/data" required></label>
+    <label>Master template path<input name="template_path" value="/opt/galaxyplexmanager/templates/master" required></label>
+    <label>Media mounts JSON<textarea name="media_mounts_json" rows="7">[{"host":"/mnt/unionfs/Media/Movies","container":"/data/Movies","read_only":true}]</textarea></label>
+    <div class="form-grid"><label>Port start<input type="number" name="port_start" value="32401"></label><label>Port end<input type="number" name="port_end" value="32999"></label></div>
+    <label class="check"><input type="checkbox" name="enable_hardware" value="true" checked> Enable /dev/dri hardware access</label>
+    <button class="button primary" type="submit">Add and test node</button>
+  </form>
+</section>
+</div>
+{% endblock %}

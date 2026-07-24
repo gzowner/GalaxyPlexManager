@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Deployments · {{ app_name }}{% endblock %}
+{% block heading %}<h1>Deployments</h1><p>Only deployments inside your account hierarchy are shown.</p>{% endblock %}
+{% block content %}
+<section class="panel">
+  {% if deployments %}
+  <div class="deployment-grid">
+  {% for item in deployments %}
+    <article class="deployment-card">
+      <div class="deployment-title"><div><h2>{{ item.name }}</h2><p>{{ item.owner.username }} · {{ item.node.name }}</p></div><span class="status {{ item.status.value }}">{{ item.status.value|replace('_',' ') }}</span></div>
+      <dl><dt>Public address</dt><dd><a href="http://{{ item.node.host }}:{{ item.host_port }}/web" target="_blank" rel="noopener">{{ item.node.host }}:{{ item.host_port }}</a></dd><dt>Container</dt><dd>{{ item.container_name }}</dd><dt>Claimed</dt><dd>{{ 'Yes' if item.claimed else 'No' }}</dd></dl>
+      {% if item.last_error %}<div class="inline-error">{{ item.last_error }}</div>{% endif %}
+      <div class="actions">
+        <form method="post" action="/deployments/{{ item.id }}/action/restart"><button class="button subtle">Restart</button></form>
+        <form method="post" action="/deployments/{{ item.id }}/action/rebuild"><button class="button subtle">Rebuild</button></form>
+        {% if item.status.value == 'stopped' %}<form method="post" action="/deployments/{{ item.id }}/action/start"><button class="button subtle">Start</button></form>{% else %}<form method="post" action="/deployments/{{ item.id }}/action/stop"><button class="button subtle">Stop</button></form>{% endif %}
+        <a class="button subtle" href="/deployments/{{ item.id }}/logs">Logs</a>
+      </div>
+      {% if not item.claimed %}<form method="post" action="/deployments/{{ item.id }}/claim" class="claim-row"><input name="claim_token" placeholder="claim-..." required><button class="button primary">Retry claim</button></form>{% endif %}
+      <form method="post" action="/deployments/{{ item.id }}/delete" class="delete-row" onsubmit="return confirm('Delete this Plex deployment?');"><label class="check"><input type="checkbox" name="purge_config" value="true"> Purge config</label><button class="button danger">Delete</button></form>
+    </article>
+  {% endfor %}
+  </div>
+  {% else %}<div class="empty"><h3>No deployments visible</h3><p>Create a customer-owned Plex container from the master template.</p><a class="button primary" href="/deployments/new">Create Plex</a></div>{% endif %}
+</section>
+{% endblock %}

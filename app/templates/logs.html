@@ -1,0 +1,4 @@
+{% extends "base.html" %}
+{% block title %}Logs · {{ deployment.name }}{% endblock %}
+{% block heading %}<h1>{{ deployment.name }} logs</h1><p>Last 200 Docker log lines.</p>{% endblock %}
+{% block content %}<section class="panel"><pre class="logs">{{ logs }}</pre></section>{% endblock %}

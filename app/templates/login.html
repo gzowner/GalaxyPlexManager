@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sign in · {{ app_name }}</title>
+  <link rel="stylesheet" href="{{ url_for('static', path='app.css') }}">
+</head>
+<body class="login-body">
+  <section class="login-card">
+    <div class="brand centered"><span class="brand-mark">G</span><div><strong>Galaxy</strong><small>Plex Manager</small></div></div>
+    <h1>Welcome back</h1>
+    <p>Manage customer-owned Plex deployments.</p>
+    {% if error %}<div class="alert error">{{ error }}</div>{% endif %}
+    <form method="post" action="/login" class="stack">
+      <label>Username<input name="username" autocomplete="username" required autofocus></label>
+      <label>Password<input type="password" name="password" autocomplete="current-password" required></label>
+      <button class="button primary full" type="submit">Sign in</button>
+    </form>
+  </section>
+</body>
+</html>

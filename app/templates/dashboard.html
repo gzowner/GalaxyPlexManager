@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Dashboard · {{ app_name }}{% endblock %}
+{% block heading %}<h1>Dashboard</h1><p>Your Plex deployment overview.</p>{% endblock %}
+{% block content %}
+<section class="stats-grid">
+  <article class="stat"><span>Total</span><strong>{{ counts.total }}</strong></article>
+  <article class="stat"><span>Running</span><strong>{{ counts.running }}</strong></article>
+  <article class="stat"><span>Stopped</span><strong>{{ counts.stopped }}</strong></article>
+  <article class="stat"><span>Needs attention</span><strong>{{ counts.error }}</strong></article>
+</section>
+<section class="panel">
+  <div class="panel-head"><div><h2>Recent deployments</h2><p>Servers you are allowed to manage.</p></div><a href="/deployments">View all</a></div>
+  {% if deployments %}
+  <div class="table-wrap"><table><thead><tr><th>Name</th><th>Owner</th><th>Node</th><th>Port</th><th>Status</th></tr></thead><tbody>
+  {% for item in deployments %}<tr><td><strong>{{ item.name }}</strong></td><td>{{ item.owner.username }}</td><td>{{ item.node.name }}</td><td>{{ item.host_port }}</td><td><span class="status {{ item.status.value }}">{{ item.status.value|replace('_',' ') }}</span></td></tr>{% endfor %}
+  </tbody></table></div>
+  {% else %}<div class="empty"><h3>No Plex deployments yet</h3><p>Create the first customer clone from the master template.</p><a class="button primary" href="/deployments/new">Create Plex</a></div>{% endif %}
+</section>
+{% endblock %}

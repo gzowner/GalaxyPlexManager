@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Users · {{ app_name }}{% endblock %}
+{% block heading %}<h1>Users</h1><p>Admin creates resellers and users. Resellers create their own users.</p>{% endblock %}
+{% block content %}
+<div class="two-column">
+<section class="panel">
+  <div class="panel-head"><div><h2>Accounts</h2><p>Role and deployment ownership controls.</p></div></div>
+  <div class="table-wrap"><table><thead><tr><th>Username</th><th>Role</th><th>Parent</th><th>Limit</th><th>Status</th><th></th></tr></thead><tbody>
+  {% for item in users %}<tr>
+    <td><strong>{{ item.username }}</strong><small>{{ item.email }}</small></td>
+    <td>{{ item.role.value|title }}</td><td>{{ item.parent.username if item.parent else '—' }}</td><td>{{ item.deployment_limit }}</td>
+    <td><span class="status {{ 'running' if item.is_active else 'stopped' }}">{{ 'Active' if item.is_active else 'Disabled' }}</span></td>
+    <td>{% if item.id != current_user.id %}<form method="post" action="/users/{{ item.id }}/toggle"><button class="button subtle" type="submit">{{ 'Disable' if item.is_active else 'Enable' }}</button></form>{% endif %}</td>
+  </tr>{% endfor %}
+  </tbody></table></div>
+</section>
+<section class="panel form-panel">
+  <h2>Create account</h2>
+  <form method="post" action="/users/new" class="stack">
+    <label>Username<input name="username" required></label>
+    <label>Email<input type="email" name="email" required></label>
+    <label>Temporary password<input type="password" name="password" minlength="8" required></label>
+    {% if current_user.role.value == 'admin' %}
+    <label>Role<select name="role"><option value="user">User</option><option value="reseller">Reseller</option><option value="admin">Admin</option></select></label>
+    <label>Parent reseller ID <span>(optional for users)</span><input type="number" min="1" name="parent_id"></label>
+    {% else %}<input type="hidden" name="role" value="user">{% endif %}
+    <label>Deployment limit<input type="number" min="0" name="deployment_limit" value="1" required></label>
+    <button class="button primary" type="submit">Create account</button>
+  </form>
+</section>
+</div>
+{% endblock %}

@@ -1,0 +1,34 @@
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: galaxyplex
+      POSTGRES_USER: galaxy
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change-me}
+    volumes:
+      - galaxyplex-db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U galaxy -d galaxyplex"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  manager:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+      - .env
+    ports:
+      - "${MANAGER_PORT:-8080}:8000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /opt/galaxyplexmanager:/opt/galaxyplexmanager
+      - /mnt:/mnt:ro
+      - /dev/dri:/dev/dri
+
+volumes:
+  galaxyplex-db:
